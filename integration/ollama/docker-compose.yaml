@@ -13,12 +13,18 @@ services:
   ollama-model:
     image: ollama/ollama:${OLLAMA_VERSION:-latest}
     entrypoint: ["/bin/sh", "-c"]
-    command: ["ollama pull \"$$OLLAMA_MODEL\""]
+    command: ["ollama pull \"$$OLLAMA_MODEL\" && tail -f /dev/null"]
     environment:
       OLLAMA_HOST: http://ollama:11434
       OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:0.6b}
     volumes:
       - ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list | grep -Fq \"$$OLLAMA_MODEL\""]
+      interval: 2s
+      timeout: 2s
+      retries: 60
+      start_period: 5s
     depends_on:
       ollama:
         condition: service_healthy
@@ -35,7 +41,7 @@ services:
       OPENAI_MODEL: ${OLLAMA_MODEL:-qwen3:0.6b}
     depends_on:
       ollama-model:
-        condition: service_completed_successfully
+        condition: service_healthy
 
 volumes:
   ollama:

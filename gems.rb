@@ -27,3 +27,7 @@ group :test do
 	gem "bake-test"
 	gem "bake-test-integration"
 end
+
+gem "decode", "~> 0.30.0", group: :documentation
+
+gem "sus-fixtures-async", "~> 0.2.0", group: :test
