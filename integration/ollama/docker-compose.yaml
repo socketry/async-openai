@@ -1,0 +1,41 @@
+services:
+  ollama:
+    image: ollama/ollama:${OLLAMA_VERSION:-latest}
+    volumes:
+      - ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 2s
+      timeout: 2s
+      retries: 60
+      start_period: 5s
+
+  ollama-model:
+    image: ollama/ollama:${OLLAMA_VERSION:-latest}
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["ollama pull \"$$OLLAMA_MODEL\""]
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3:0.6b}
+    volumes:
+      - ollama:/root/.ollama
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+  tests:
+    image: ruby:${RUBY_VERSION:-3.4}
+    volumes:
+      - ../../:/code
+    working_dir: /code
+    command: bash -c "bundle install && bundle exec sus integration/ollama/test"
+    environment:
+      COVERAGE: ${COVERAGE}
+      OPENAI_API_ENDPOINT: http://ollama:11434/v1
+      OPENAI_MODEL: ${OLLAMA_MODEL:-qwen3:0.6b}
+    depends_on:
+      ollama-model:
+        condition: service_completed_successfully
+
+volumes:
+  ollama:
