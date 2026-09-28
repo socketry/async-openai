@@ -27,3 +27,5 @@ group :test do
 	gem "bake-test"
 	gem "bake-test-integration"
 end
+
+gem "decode", "~> 0.30.0", group: :documentation
