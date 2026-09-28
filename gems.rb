@@ -29,3 +29,5 @@ group :test do
 end
 
 gem "decode", "~> 0.30.0", group: :documentation
+
+gem "sus-fixtures-async", "~> 0.2.0", group: :test
