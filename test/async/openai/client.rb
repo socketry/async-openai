@@ -38,7 +38,10 @@ describe Async::OpenAI::Client do
 					id: "resp_test",
 					model: "test-model",
 					status: "completed",
-					output: [{type: "message", content: [{type: "output_text", text: "Hello"}]}],
+					output: [
+						{type: "reasoning"},
+						{type: "message", content: [{type: "output_text", text: "Hello"}]},
+					],
 					usage: {total_tokens: 3},
 				}
 			end
@@ -75,6 +78,7 @@ describe Async::OpenAI::Client do
 			completion = client.chat(messages, model: "test-model", temperature: 0)
 
 			expect(completion.response).to be == "Hello"
+			expect(completion.tool_calls).to be_nil
 			expect(completion.model).to be == "test-model"
 			expect(completion.usage[:total_tokens]).to be == 3
 			expect(requests.last).to have_keys(
@@ -93,6 +97,7 @@ describe Async::OpenAI::Client do
 			expect(response.output_text).to be == "Hello"
 			expect(response.status).to be == "completed"
 			expect(response.model).to be == "test-model"
+			expect(response.usage[:total_tokens]).to be == 3
 			expect(requests.last).to have_keys(
 				method: be == "POST",
 				path: be == "/v1/responses",
