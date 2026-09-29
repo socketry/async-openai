@@ -6,28 +6,6 @@ An asynchronous Ruby client for the OpenAI API, built on Async and Async::REST. 
 
 ## Usage
 
-The client uses `OPENAI_API_KEY` for authentication and connects to `https://api.openai.com/v1` by default. You can also pass `api_key:` to `Client.open` or provide a different endpoint.
-
-``` ruby
-require "async/openai"
-
-Async::OpenAI::Client.open do |client|
-	models = client.models
-	puts models.ids
-
-	completion = client.chat(
-		[{role: "user", content: "Say hello."}],
-		model: "gpt-4.1-mini"
-	)
-	puts completion.response
-
-	response = client.responses("Say hello.", model: "gpt-4.1-mini")
-	puts response.output_text
-end
-```
-
-Both generation methods accept the API's remaining request parameters as keyword arguments. Their representations expose the decoded response through `value` as well as convenience methods such as `response`, `output_text`, `choices`, and `usage`.
-
 Please see the [project documentation](https://socketry.github.io/async-openai/) for more details.
 
 ## Contributing
@@ -50,3 +28,8 @@ The context includes guidance for creating Ruby gems, and the skills include the
 ## Releases
 
 Please see the [project releases](https://socketry.github.io/async-openai/releases/index) for all releases.
+
+### v0.0.1
+
+  - Add the initial Async::OpenAI gem structure and authenticated API client resource.
+  - Add model listing, chat completion, and Responses API client methods.
